@@ -7,88 +7,67 @@
   <version>1.0-SNAPSHOT</version>
   <name>java-converter Maven Webapp</name>
   <url>http://maven.apache.org</url>
-    <properties>
-        <!-- Infrastructure properties -->
-        <compiler.source.version>1.8</compiler.source.version>
-        <compiler.target.version>1.8</compiler.target.version>
-        <appengine.app.version>1</appengine.app.version>
-        <appengine.target.version>1.9.71</appengine.target.version>
-        <appengine-maven-plugin-version>1.3.2</appengine-maven-plugin-version>
-    </properties>
+
+  <properties>
+    <!-- Infrastructure properties -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <compiler.source.version>1.8</compiler.source.version>
+    <compiler.target.version>1.8</compiler.target.version>
+    <appengine.app.version>1</appengine.app.version>
+    <appengine.target.version>1.9.98</appengine.target.version>
+    <appengine-maven-plugin-version>1.3.2</appengine-maven-plugin-version>
+
+    <!-- Dependency versions -->
+    <commons-lang3.version>3.22.0</commons-lang3.version>
+    <javaparser.version>2.5.1</javaparser.version>
+    <junit.version>4.13.2</junit.version>
+    <hamcrest.version>3.0</hamcrest.version>
+
+    <!-- Plugin versions -->
+    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+    <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
+    <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
+  </properties>
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
-      <!-- Compile/runtime dependencies -->
-      <dependency>
-          <groupId>com.google.appengine</groupId>
-          <artifactId>appengine-api-1.0-sdk</artifactId>
-          <version>${appengine.target.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-          <version>3.1</version>
-      </dependency>
-      <dependency>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-all</artifactId>
-          <version>1.3</version>
-          <scope>test</scope>
-      </dependency>
+    <!-- Compile/runtime dependencies -->
     <dependency>
       <groupId>com.github.javaparser</groupId>
       <artifactId>javaparser-core</artifactId>
-      <version>2.5.1</version>
+      <version>${javaparser.version}</version>
     </dependency>
-      <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-          <version>3.3.2</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-math3</artifactId>
-          <version>3.6.1</version>
-      </dependency>
-      <dependency>
-          <groupId>freemarker</groupId>
-          <artifactId>freemarker</artifactId>
-          <version>2.3.9</version>
-      </dependency>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.12</version>
-          <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
+    <!-- Provided by the App Engine runtime, must not be packaged into the WAR -->
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-1.0-sdk</artifactId>
+      <version>${appengine.target.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-      <!-- Plexus -->
-      <dependency>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
-          <version>1.5.5</version>
-      </dependency>
-      <dependency>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-utils</artifactId>
-          <version>3.0.24</version>
-      </dependency>
-      <dependency>
-          <groupId>com.google.appengine</groupId>
-          <artifactId>appengine-testing</artifactId>
-          <version>${appengine.target.version}</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>com.google.appengine</groupId>
-          <artifactId>appengine-api-stubs</artifactId>
-          <version>${appengine.target.version}</version>
-          <scope>test</scope>
-      </dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- hamcrest 3.0 already provides org.hamcrest.* -->
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <finalName>java-converter</finalName>
@@ -96,7 +75,7 @@
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
-              <version>3.5.1</version>
+              <version>${maven-compiler-plugin.version}</version>
               <configuration>
                   <source>${compiler.source.version}</source>
                   <target>${compiler.target.version}</target>
@@ -106,12 +85,17 @@
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
-              <version>2.19.1</version>
+              <version>${maven-surefire-plugin.version}</version>
               <configuration>
                   <redirectTestOutputToFile>true</redirectTestOutputToFile>
                   <argLine>-Xmx2096m</argLine>
                   <forkCount>0.5C</forkCount>
               </configuration>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>${maven-war-plugin.version}</version>
           </plugin>
           <plugin>
               <groupId>com.google.cloud.tools</groupId>
